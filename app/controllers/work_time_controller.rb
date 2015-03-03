@@ -110,7 +110,6 @@ class WorkTimeController < ApplicationController
       prjs = WtProjectOrders.find(:all, :order=>"dsp_pos", :conditions=>"uid=-1")
       prjs.each do |po|
         dsp_prj = po.dsp_prj
-        dsp_pos = po.dsp_pos
         next unless @prj_cost.key?(dsp_prj) # 値の無いプロジェクトはパス
         next unless @prj_cost[dsp_prj].key?(-1) # 値の無いプロジェクトはパス
         next if @prj_cost[dsp_prj][-1] == 0 # 値の無いプロジェクトはスパ
@@ -194,7 +193,6 @@ class WorkTimeController < ApplicationController
       prjs = WtProjectOrders.find(:all, :order=>"dsp_pos", :conditions=>"uid=-1")
       prjs.each do |po|
         dsp_prj = po.dsp_prj
-        dsp_pos = po.dsp_pos
         next unless @r_prj_cost.key?(dsp_prj) # 値の無いプロジェクトはパス
         next unless @r_prj_cost[dsp_prj].key?(-1) # 値の無いプロジェクトはパス
         next if @r_prj_cost[dsp_prj][-1] == 0 # 値の無いプロジェクトはスパ
@@ -449,7 +447,7 @@ private
     begin
       Redmine::Plugin.find :redmine_backlogs
       @is_registerd_backlog = true
-    rescue Exception => exception
+    rescue Exception
     end
   end
 
@@ -652,7 +650,6 @@ private
     issue = Issue.find_by_id(issue_id)
     return 'Error: Issue'+issue_id+': Private!' if issue.nil? || !issue.visible?
     return if vals["remaining_hours"].blank? && vals["status_id"].blank?
-    journal = issue.init_journal(User.current)
     # update "0.0" is changed
     vals["remaining_hours"] = 0 if vals["remaining_hours"] == "0.0"
     if vals['status_id'] =~ /^M+(.*)$/
